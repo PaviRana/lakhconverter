@@ -3,23 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Lakh to Amount Converter</title>
 
 <style>
 
 body{
+    margin:0;
+    padding:0;
     font-family:Arial, sans-serif;
     background:#f4f6f9;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
-    margin:0;
 }
 
 .container{
-    background:#fff;
     width:420px;
+    background:#ffffff;
     padding:30px;
     border-radius:12px;
     box-shadow:0 4px 15px rgba(0,0,0,0.1);
@@ -30,35 +32,49 @@ h2{
     margin-bottom:25px;
 }
 
+label{
+    font-weight:bold;
+    display:block;
+    margin-bottom:10px;
+}
+
 input{
     width:100%;
     padding:12px;
-    font-size:16px;
     border:1px solid #ccc;
     border-radius:6px;
-    margin-bottom:20px;
+    font-size:16px;
     box-sizing:border-box;
+    margin-bottom:20px;
 }
 
-.result{
+.result-box{
     background:#f8f9fa;
     padding:20px;
     border-radius:10px;
 }
 
 .amount{
-    font-size:30px;
+    font-size:32px;
     font-weight:bold;
     color:#28a745;
-    margin-bottom:15px;
     text-align:center;
+    margin-bottom:15px;
+    word-break:break-word;
 }
 
 .words{
     font-size:16px;
-    color:#444;
-    line-height:1.5;
     text-align:center;
+    color:#444;
+    line-height:1.6;
+}
+
+.info{
+    margin-top:15px;
+    text-align:center;
+    color:#666;
+    font-size:13px;
 }
 
 </style>
@@ -68,17 +84,19 @@ input{
 
 <div class="container">
 
-    <h2>Lakh Converter</h2>
+    <h2>Lakh to Amount Converter</h2>
+
+    <label>Enter Amount in Lakhs</label>
 
     <input
         type="number"
         id="amount"
-        placeholder="Enter Amount in Lakhs"
+        placeholder="Example: 280.00"
         step="0.01"
         oninput="convertAmount()"
     >
 
-    <div class="result">
+    <div class="result-box">
 
         <div class="amount" id="convertedAmount">
             ₹ 0
@@ -90,13 +108,17 @@ input{
 
     </div>
 
+    <div class="info">
+        1 Lakh = 100000
+    </div>
+
 </div>
 
 <script>
 
-function formatIndian(num){
+function formatAmount(num){
 
-    return new Intl.NumberFormat('en-IN').format(num);
+    return Math.round(num);
 
 }
 
@@ -120,16 +142,16 @@ function convertAmount(){
     let converted = amount * 100000;
 
     document.getElementById("convertedAmount").innerHTML =
-        "₹ " + formatIndian(converted);
+        "₹ " + formatAmount(converted);
 
     document.getElementById("amountWords").innerHTML =
-        numberToWords(converted);
+        numberToWords(Math.round(converted)) + " Rupees";
 
 }
 
 function numberToWords(num){
 
-    if(num === 0) return "Zero Rupees";
+    if(num === 0) return "Zero";
 
     const ones = [
         "", "One", "Two", "Three", "Four",
@@ -141,9 +163,9 @@ function numberToWords(num){
     ];
 
     const tens = [
-        "", "", "Twenty", "Thirty", "Forty",
-        "Fifty", "Sixty", "Seventy",
-        "Eighty", "Ninety"
+        "", "", "Twenty", "Thirty",
+        "Forty", "Fifty", "Sixty",
+        "Seventy", "Eighty", "Ninety"
     ];
 
     function convert(n){
@@ -152,30 +174,31 @@ function numberToWords(num){
             return ones[n];
 
         if(n < 100)
-            return tens[Math.floor(n/10)] +
-            (n%10 ? " " + ones[n%10] : "");
+            return tens[Math.floor(n / 10)] +
+            (n % 10 ? " " + ones[n % 10] : "");
 
         if(n < 1000)
-            return ones[Math.floor(n/100)] +
+            return ones[Math.floor(n / 100)] +
             " Hundred " +
-            (n%100 ? convert(n%100) : "");
+            (n % 100 ? convert(n % 100) : "");
 
         if(n < 100000)
-            return convert(Math.floor(n/1000)) +
+            return convert(Math.floor(n / 1000)) +
             " Thousand " +
-            (n%1000 ? convert(n%1000) : "");
+            (n % 1000 ? convert(n % 1000) : "");
 
         if(n < 10000000)
-            return convert(Math.floor(n/100000)) +
+            return convert(Math.floor(n / 100000)) +
             " Lakh " +
-            (n%100000 ? convert(n%100000) : "");
+            (n % 100000 ? convert(n % 100000) : "");
 
-        return convert(Math.floor(n/10000000)) +
+        return convert(Math.floor(n / 10000000)) +
             " Crore " +
-            (n%10000000 ? convert(n%10000000) : "");
+            (n % 10000000 ? convert(n % 10000000) : "");
+
     }
 
-    return convert(Math.floor(num)) + " Rupees";
+    return convert(num);
 
 }
 
